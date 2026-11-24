@@ -17,9 +17,11 @@ event-registration/
 ├── .htaccess                  Blocks .sql/.md/.sh/hidden files and folder listings
 │
 ├── config/                    (blocked from the browser by .htaccess)
-│   ├── config.php             All settings: XAMPP defaults (DB, base URL, debug), session start;
-│   │                          loads config.production.php instead when it exists (live server)
-│   ├── config.production.example.php  Template for the live server settings (placeholders only)
+│   ├── config.php             All settings + session start; picks the local or host file below
+│   │                          automatically (localhost = local, any other address = host)
+│   ├── config.local.php       LOCAL settings: XAMPP database (localhost / root), debug on
+│   ├── config.production.php  HOST settings: InfinityFree database, debug off (in .gitignore — never on GitHub)
+│   ├── config.production.example.php  Public template of the host settings (placeholders only)
 │   ├── database.php           Creates the PDO connection in $pdo — every page requires this file
 │   └── .htaccess              Denies direct web access
 │
@@ -279,6 +281,6 @@ To start over, delete all rows in `administrators` — `admin/setup.php` works a
 ## Deploying to InfinityFree
 
 See **[DEPLOYMENT.md](DEPLOYMENT.md)**: checklist, production database configuration
-(`config/config.production.php`, created on the server only), SQL export/import, File Manager upload,
+(`config/config.production.php`, filled in on your PC and uploaded to the server — never pushed to GitHub), SQL export/import, File Manager upload,
 live testing and troubleshooting. The ready-to-upload files are in `deploy\htdocs\` (also zipped as
 `deployvent-registration-htdocs.zip`).

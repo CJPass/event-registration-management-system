@@ -108,7 +108,7 @@ Method: each page was loaded at 5 widths in the browser and the page width was m
 | Upload package built (`deploy/htdocs/`, `deploy/event-registration-htdocs.zip`) | ✅ | Every file in the package is identical to the current source. |
 | Package excludes tests, database, docs, `test_connection.php` | ✅ | Confirmed by file list. |
 | Import file without `CREATE DATABASE` / `USE` (`database/infinityfree_import.sql`) | ✅ | Confirmed. |
-| Production config file approach (`config/config.production.php` on server only) | ✅ | Not present locally (correct). |
+| Local/host config files (`config.local.php`, `config.production.php`) | ✅ | Chosen automatically by address; host file is in `.gitignore`. |
 | InfinityFree account active, database created and imported | ❌ | No evidence available. |
 | Files uploaded to `htdocs` | ❌ | No evidence available. |
 | Live URL opens over HTTPS | ❌ | **No live URL found in the project.** |
@@ -148,7 +148,7 @@ index.php, event.php, register.php, confirmation.php, test_connection.php
 .htaccess
 admin/            (14 PHP files)
 assets/           (css/style.css, js/script.js, images/)
-config/           (config.php, database.php, config.production.example.php, .htaccess)
+config/           (config.php, config.local.php, database.php, config.production.example.php, .htaccess)
 includes/         (11 PHP files + .htaccess)
 database/         (event_registration.sql, infinityfree_import.sql, migration_001_admin_login.sql, + your phpMyAdmin export)
 tests/            (TEST_REPORT.md, .htaccess)

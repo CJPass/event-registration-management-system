@@ -9,8 +9,8 @@ What the code already does for production (no edits needed):
 
 | Requirement | How it is handled |
 |---|---|
-| Credentials outside public files | Real values go in `config/config.production.php`, created **on the server only**. The `config/` folder is blocked by `.htaccess`, and the file only `return`s an array, so it prints nothing even if reached. The template `config.production.example.php` holds placeholders only. |
-| Production DB configuration | When `config.production.php` exists, `config/config.php` uses it instead of the XAMPP defaults (`localhost` / `root`). |
+| Credentials outside public files | Real values go in `config/config.production.php`, which is in `.gitignore` (never on GitHub) and not in the upload zip — you upload it separately. The `config/` folder is blocked by `.htaccess`, and the file only `return`s an array, so it prints nothing even if reached. The template `config.production.example.php` holds placeholders only. |
+| Local vs host configuration | `config/config.php` checks the address: on `localhost` it loads `config.local.php` (XAMPP), on any other domain it loads `config.production.php` (InfinityFree). Both files can sit in the same folder safely. |
 | Works inside `htdocs` | Every link, form action, redirect and asset goes through `url()` / `redirect()` using `BASE_URL`. Set `'base_url' => '/'` and everything resolves from the site root. Forms without `action` post to the same page. |
 | No debug output | `'debug' => false` hides error details: visitors see a plain "Site temporarily unavailable" page (HTTP 500); the real error is written to the server log. No `var_dump`/`print_r`/`phpinfo` in the code. |
 | Sessions and admin login | Cookie path follows `BASE_URL`; `HttpOnly`, `SameSite=Lax`, `Secure` switched on automatically under HTTPS; IDs regenerated on login/logout; 30-minute idle logout. |
@@ -55,8 +55,8 @@ What the code already does for production (no edits needed):
 | `db_user` | "MySQL User Name" | `if0_NNNNNNNN` |
 | `db_pass` | "MySQL Password" — your hosting account (vPanel) password, shown with a "Show" button; it is **not** your InfinityFree client-area login password | — |
 
-Create `htdocs/config/config.production.php` (copy `config.production.example.php`, rename it,
-then edit it in the File Manager's editor):
+Open `config/config.production.php` in your project on your PC, replace the placeholder values,
+save, then upload it to `htdocs/config/` (or edit it there in the File Manager's editor):
 
 ```php
 <?php
@@ -82,9 +82,9 @@ $pdo = new PDO($dsn, DB_USER, DB_PASS, [
 ```
 
 Notes
-- Do **not** create `config.production.php` in your XAMPP folder — XAMPP would then try to use the
-  InfinityFree database (which only accepts connections from InfinityFree's own servers).
-  The build script removes it from the package anyway.
+- Keeping `config.production.php` on your PC is safe: on `localhost` the site always uses
+  `config.local.php`. It is in `.gitignore`, so your real password is never pushed to GitHub, and it is
+  not in the upload zip, so updating the site never overwrites it.
 - `base_url` is `'/'` when the files are directly in `htdocs`. If you upload into `htdocs/events/`,
   use `'/events/'`. A missing slash is corrected automatically.
 - Other hosts: if your host lets you put files **above** the web root, you can save the same file as
@@ -145,14 +145,15 @@ with it and `setup.php` will simply send you to the login page.
    ├── index.php  event.php  register.php  confirmation.php
    ├── admin/     (14 .php files)
    ├── assets/    (css/style.css, js/script.js, images/)
-   ├── config/    (.htaccess, config.php, database.php, config.production.example.php)
+   ├── config/    (.htaccess, config.php, config.local.php, database.php, config.production.example.php,
+   │               + your config.production.php uploaded separately)
    └── includes/  (.htaccess + 11 .php files)
    ```
 
    If you see `htdocs/htdocs/…` or `htdocs/event-registration/…`, move the files up one level
    (or set `base_url` to that folder name).
-6. In `config/`: copy/rename `config.production.example.php` to `config.production.php` and edit it
-   with your values (section 2). Save. Delete the example copy if you like.
+6. Upload your filled-in `config\config.production.php` (section 2) into `htdocs/config/`.
+   You only need to do this once; later zip uploads do not touch it.
 7. Make sure `config/.htaccess` and `includes/.htaccess` were uploaded (some upload tools skip
    files starting with a dot — upload them one by one if missing).
 8. Client area → **SSL certificates** (free SSL) → request a certificate for your domain, complete the
@@ -220,7 +221,7 @@ reload the page to read the real reason, fix it, then **set it back to `false`**
 | `Base table or view not found: … events` | SQL not imported, or imported into another database | Import again into the database named in `db_name` (section 3). |
 | Site still uses XAMPP values | `config.production.php` missing, misnamed, or in the wrong folder | Must be exactly `htdocs/config/config.production.php` (not `.php.txt`; not `config.production.example.php`). |
 | `Too many connections` / `max_user_connections` | Free-plan limit reached briefly | Wait a minute and reload. |
-| It works on InfinityFree but not from XAMPP | InfinityFree databases accept no remote connections | Expected. Always use the local DB on XAMPP; do not keep `config.production.php` on your PC. |
+| It works on InfinityFree but not from XAMPP | InfinityFree databases accept no remote connections | Expected. On XAMPP the site always uses `config.local.php` and your local database. |
 | SQL import error `#1044 Access denied … to database 'event_registration_db'` | File still has `CREATE DATABASE` / `USE` | Use `infinityfree_import.sql` or remove those lines from your export. |
 
 ### HTTP 500 errors
