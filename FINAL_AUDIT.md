@@ -75,7 +75,7 @@ All operations were done through the website's own forms over HTTP, then checked
 
 **Business rules also tested today:** event full (13 tests), duplicate email (7), cancelled event (10), validation (18), email rules (11), search/filter (16) — all passed.
 
-**Totals:** `tests/run_tests.sh` → **206 passed, 0 failed**; `tests/db_failure_tests.sh` → **18 passed, 0 failed**. The database was restored automatically afterwards.
+**Totals:** 206 end-to-end checks and 18 database-failure checks passed (see `tests/TEST_REPORT.md`). The custom JavaScript and the shell/PowerShell helper scripts have since been removed so the project uses only PHP, MySQL, HTML, CSS and Bootstrap.
 
 ---
 
@@ -147,12 +147,11 @@ README.md, DEPLOYMENT.md, FINAL_AUDIT.md
 index.php, event.php, register.php, confirmation.php, test_connection.php
 .htaccess
 admin/            (14 PHP files)
-assets/           (css/style.css, js/script.js, images/)
+assets/           (css/style.css, images/)
 config/           (config.php, database.php, config.production.example.php, .htaccess)
 includes/         (11 PHP files + .htaccess)
 database/         (event_registration.sql, infinityfree_import.sql, migration_001_admin_login.sql, + your phpMyAdmin export)
-deploy/build-package.ps1
-tests/            (run_tests.sh, db_failure_tests.sh, TEST_REPORT.md, .htaccess)
+tests/            (TEST_REPORT.md, .htaccess)
 ```
 
 What it **must not** contain (put these in `.gitignore`):

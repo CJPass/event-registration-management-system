@@ -102,14 +102,9 @@ require_once __DIR__ . '/../includes/admin_nav.php';
                         <a href="<?= url('admin/registration_edit.php?id=' . $r['registration_id']) ?>" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <form method="post" action="<?= url('admin/registration_delete.php') ?>" class="d-inline">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="registration_id" value="<?= (int) $r['registration_id'] ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                    data-confirm="Delete the registration of <?= e($r['full_name']) ?>? This cannot be undone.">
-                                <i class="bi bi-trash"></i><span class="visually-hidden">Delete</span>
-                            </button>
-                        </form>
+                        <?php $delAction = 'admin/registration_delete.php'; $delField = 'registration_id'; $delId = $r['registration_id']; $delSmall = true; $delIconOnly = true;
+                              $delMessage = 'Delete the registration of ' . $r['full_name'] . '? This cannot be undone.';
+                              require __DIR__ . '/../includes/delete_modal.php'; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

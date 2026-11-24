@@ -23,14 +23,7 @@ What the code already does for production (no edits needed):
 
 ### Before you start (on your PC)
 - [ ] App works on XAMPP (`http://localhost/event-registration/`): log in, add/edit/delete an event, register, change a status.
-- [ ] Optional: run the tests (see README) — `206 passed` and `18 passed`.
-- [ ] Build the upload package (PowerShell, in the project folder):
-
-  ```powershell
-  powershell -ExecutionPolicy Bypass -File deploy\build-package.ps1
-  ```
-
-  This creates `deploy\htdocs\` and `deploy\event-registration-htdocs.zip` containing **only**:
+- [ ] Use the upload package: `deploy\htdocs\` (the same files are zipped as `deploy\event-registration-htdocs.zip`) contains **only**:
   `.htaccess, index.php, event.php, register.php, confirmation.php, admin/, assets/, config/, includes/`.
   It leaves out `tests/`, `database/`, `README.md`, `DEPLOYMENT.md`, `test_connection.php` and any `config.production.php`.
 - [ ] Have `database\infinityfree_import.sql` ready (fresh install) — or export your XAMPP data (section 3).
@@ -151,9 +144,9 @@ with it and `setup.php` will simply send you to the login page.
    ├── .htaccess          ← hidden file; turn on "show hidden files" if you don't see it
    ├── index.php  event.php  register.php  confirmation.php
    ├── admin/     (14 .php files)
-   ├── assets/    (css/style.css, js/script.js, images/)
+   ├── assets/    (css/style.css, images/)
    ├── config/    (.htaccess, config.php, database.php, config.production.example.php)
-   └── includes/  (.htaccess + 10 .php files)
+   └── includes/  (.htaccess + 11 .php files)
    ```
 
    If you see `htdocs/htdocs/…` or `htdocs/event-registration/…`, move the files up one level

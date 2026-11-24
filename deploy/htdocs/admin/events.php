@@ -89,14 +89,9 @@ require_once __DIR__ . '/../includes/admin_nav.php';
                         <a href="<?= url('admin/event_edit.php?id=' . $ev['event_id']) ?>" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <form method="post" action="<?= url('admin/event_delete.php') ?>" class="d-inline">
-                            <?= csrf_field() ?>
-                            <input type="hidden" name="event_id" value="<?= (int) $ev['event_id'] ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                    data-confirm="Delete &quot;<?= e($ev['event_name']) ?>&quot;? Its registrations will also be deleted. This cannot be undone.">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </form>
+                        <?php $delAction = 'admin/event_delete.php'; $delField = 'event_id'; $delId = $ev['event_id']; $delSmall = true; $delIconOnly = false;
+                              $delMessage = 'Delete "' . $ev['event_name'] . '"? Its registrations will also be deleted. This cannot be undone.';
+                              require __DIR__ . '/../includes/delete_modal.php'; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

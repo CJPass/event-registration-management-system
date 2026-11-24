@@ -37,16 +37,11 @@ require_once __DIR__ . '/../includes/admin_nav.php';
     </div>
     <div class="d-flex flex-wrap gap-2 d-print-none">
         <?php $r = $reg; $statusReturn = 'view'; require __DIR__ . '/../includes/status_buttons.php'; ?>
-        <button type="button" class="btn btn-light" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+        <span class="btn btn-light disabled" title="Use your browser menu or Ctrl+P to print"><i class="bi bi-printer"></i> Ctrl+P to print</span>
         <a href="<?= url('admin/registration_edit.php?id=' . $id) ?>" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
-        <form method="post" action="<?= url('admin/registration_delete.php') ?>" class="d-inline">
-            <?= csrf_field() ?>
-            <input type="hidden" name="registration_id" value="<?= $id ?>">
-            <button type="submit" class="btn btn-outline-danger"
-                    data-confirm="Delete the registration of <?= e($reg['full_name']) ?>? This cannot be undone.">
-                <i class="bi bi-trash"></i> Delete
-            </button>
-        </form>
+        <?php $delAction = 'admin/registration_delete.php'; $delField = 'registration_id'; $delId = $id; $delSmall = false; $delIconOnly = false;
+              $delMessage = 'Delete the registration of ' . $reg['full_name'] . '? This cannot be undone.';
+              require __DIR__ . '/../includes/delete_modal.php'; ?>
     </div>
 </div>
 

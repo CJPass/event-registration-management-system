@@ -54,7 +54,6 @@ event-registration/
 │
 ├── assets/
 │   ├── css/style.css          Custom styles on top of Bootstrap
-│   ├── js/script.js           Delete-confirmation helper (data-confirm="…")
 │   └── images/                Logos / event images
 │
 └── database/
@@ -63,10 +62,8 @@ event-registration/
     ├── migration_001_admin_login.sql Adds the 2 login tables to an existing database (keeps your data)
     └── .htaccess
 
-tests/                         Automated tests — DO NOT upload to InfinityFree (blocked by .htaccess)
-├── run_tests.sh               206 end-to-end tests (curl + mysql); backs up and restores the database
-├── db_failure_tests.sh        18 database-failure tests; temporarily breaks and restores config/config.php
-├── TEST_REPORT.md             Latest test report: data, expected, actual and pass/fail for every test
+tests/                         Test records — DO NOT upload to InfinityFree (blocked by .htaccess)
+├── TEST_REPORT.md             Test report: data, expected, actual and pass/fail for every test
 └── output/                    results.tsv + the automatic database backup
 ```
 
@@ -208,27 +205,16 @@ Start Apache and MySQL in XAMPP. To start over at any time, re-import `database/
 - Open `admin/event_delete.php` directly in the address bar → "That action must be submitted from a form." (GET is refused.)
 - Enter `<b>Hi</b>` as a name → it is shown as text, not bold.
 
-## Automated tests
+## Languages used
 
-Requires XAMPP's Apache + MySQL running and **Git Bash** (comes with Git for Windows).
+Only the languages in the project guidelines: **PHP**, **MySQL (SQL)**, **HTML**, **CSS** and **Bootstrap 5**.
+There is no custom JavaScript: delete confirmations are Bootstrap modals (`includes/delete_modal.php`)
+opened by Bootstrap's own `data-bs-toggle="modal"`; the navbar, dropdowns and alerts also use only
+Bootstrap's built-in components.
 
-From **PowerShell** (in the project folder) — `bash` is usually not on PowerShell's PATH, so use its full path:
+## Test report
 
-```powershell
-& "C:\Program Files\Git\bin\bash.exe" tests/run_tests.sh --yes
-& "C:\Program Files\Git\bin\bash.exe" tests/db_failure_tests.sh --yes
-```
-
-From **Git Bash** (right-click the folder → "Open Git Bash here"):
-
-```bash
-bash tests/run_tests.sh --yes          # login, access, CRUD, validation, capacity, search, SQLi, XSS, CSRF, FK …
-bash tests/db_failure_tests.sh --yes   # what visitors see when the database is down / misconfigured
-```
-
-`run_tests.sh` backs up `event_registration_db`, imports the sample data, runs the tests, and restores your
-backup at the end (also if it stops early). `db_failure_tests.sh` always puts `config/config.php` back.
-Results go to `tests/output/results.tsv`; the latest written report is `tests/TEST_REPORT.md`.
+Test it by hand with the checklist above. The earlier test results are in `tests/TEST_REPORT.md`.
 
 ## Database
 
@@ -293,5 +279,5 @@ To start over, delete all rows in `administrators` — `admin/setup.php` works a
 
 See **[DEPLOYMENT.md](DEPLOYMENT.md)**: checklist, production database configuration
 (`config/config.production.php`, created on the server only), SQL export/import, File Manager upload,
-live testing and troubleshooting. Build the upload package with
-`powershell -ExecutionPolicy Bypass -File deploy\build-package.ps1`.
+live testing and troubleshooting. The ready-to-upload files are in `deploy\htdocs\` (also zipped as
+`deployvent-registration-htdocs.zip`).

@@ -3,7 +3,7 @@
  * includes/footer.php
  * ------------------------------------------------------------------
  * Bottom part of every page: closes <main>, prints the footer and
- * loads JavaScript. Include it as the LAST line of each page:
+ * loads the Bootstrap JS bundle (navbar, dropdowns, modals). Include it as the LAST line of each page:
  *     require_once __DIR__ . '/includes/footer.php';
  */
 ?>
@@ -20,7 +20,5 @@
 
 <!-- Bootstrap JS bundle (includes Popper, needed for dropdowns and the mobile menu) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Our own JavaScript -->
-<script src="<?= url('assets/js/script.js') ?>"></script>
 </body>
 </html>

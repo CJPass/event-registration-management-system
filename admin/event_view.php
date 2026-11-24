@@ -39,14 +39,9 @@ require_once __DIR__ . '/../includes/admin_nav.php';
     <div class="d-flex flex-wrap gap-2">
         <a href="<?= url('event.php?id=' . $id) ?>" class="btn btn-light"><i class="bi bi-box-arrow-up-right"></i> Public page</a>
         <a href="<?= url('admin/event_edit.php?id=' . $id) ?>" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
-        <form method="post" action="<?= url('admin/event_delete.php') ?>" class="d-inline">
-            <?= csrf_field() ?>
-            <input type="hidden" name="event_id" value="<?= $id ?>">
-            <button type="submit" class="btn btn-outline-danger"
-                    data-confirm="Delete this event and its <?= count($registrations) ?> registration(s)? This cannot be undone.">
-                <i class="bi bi-trash"></i> Delete
-            </button>
-        </form>
+        <?php $delAction = 'admin/event_delete.php'; $delField = 'event_id'; $delId = $id; $delSmall = false; $delIconOnly = false;
+              $delMessage = 'Delete this event and its ' . count($registrations) . ' registration(s)? This cannot be undone.';
+              require __DIR__ . '/../includes/delete_modal.php'; ?>
     </div>
 </div>
 
