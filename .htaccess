@@ -1,0 +1,19 @@
+# Root .htaccess — upload this into htdocs together with index.php.
+# Only standard Apache directives that free shared hosting (InfinityFree) allows.
+
+# Open index.php when a folder such as /admin/ is requested
+DirectoryIndex index.php
+
+# Don't list the files of folders that have no index page (e.g. assets/images/)
+Options -Indexes
+
+# Never serve SQL dumps, docs, shell scripts, logs, backups or hidden files
+<FilesMatch "(\.(sql|md|sh|log|bak|tsv|ini|dist)|~)$|^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

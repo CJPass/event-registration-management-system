@@ -1,0 +1,225 @@
+id	area	test	data	expected	actual	status
+AUTH-01	Login	No admin yet: /admin/login.php sends to setup	fresh DB, 0 administrators	302 http://localhost/event-registration/admin/setup.php	302 http://localhost/event-registration/admin/setup.php	PASS
+AUTH-02	Login	Setup rejects empty fields	username='' password=''	Username must be 3–50 characters: letters, numbers, dot, dash or underscore.|Password must be at least 8 characters.	Username must be 3–50 characters: letters, numbers, dot, dash or underscore.|Password must be at least 8 characters.	PASS
+AUTH-03	Login	Setup rejects short username + mismatched passwords	username=ab, password 12345678 / 87654321	Username must be 3–50 characters: letters, numbers, dot, dash or underscore.|The two passwords do not match.	Username must be 3–50 characters: letters, numbers, dot, dash or underscore.|The two passwords do not match.	PASS
+AUTH-04	Login	Rejected setups saved nothing	SELECT COUNT(*) FROM administrators	0	0	PASS
+AUTH-05	Login	Setup creates the first administrator	username=tester_14288, random 26-char password	1	1	PASS
+AUTH-06	Login	Password stored as bcrypt hash, never plain text	administrators.password_hash	bcrypt-hash-only	bcrypt-hash-only	PASS
+AUTH-07	Login	Setup refuses once an admin exists	GET admin/setup.php	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+AUTH-08	Login	Empty username/password	username='' password=''	Please enter your username and password.	Please enter your username and password.	PASS
+AUTH-09	Login	Wrong password	username=tester_14288 password=wrong-password	Incorrect username or password.	Incorrect username or password.	PASS
+AUTH-10	Login	Unknown username gives the same message	username=nobody	Incorrect username or password.	Incorrect username or password.	PASS
+AUTH-11	Login	SQL injection in username does not log in	username=' OR '1'='1' --  password=x	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+AUTH-12	Login	Failed attempts are recorded	3 failures above	3	3	PASS
+AUTH-13	Login	Correct login goes to dashboard	username=tester_14288 + correct password	302 http://localhost/event-registration/admin/index.php	302 http://localhost/event-registration/admin/index.php	PASS
+AUTH-14	Login	Session ID regenerated after login	ERS_SESSION cookie before vs after	changed	changed	PASS
+AUTH-15	Login	Successful login clears failed attempts	login_attempts rows	0	0	PASS
+AUTH-16	Login	Dashboard shows the signed-in admin	GET admin/index.php	contains: Signed in as <strong class="text-body">tester_14288</strong>	found: Signed in as <strong class="text-body">tester_14288</strong>	PASS
+AUTH-17	Login	Login page while logged in goes to dashboard	GET admin/login.php	302 http://localhost/event-registration/admin/index.php	302 http://localhost/event-registration/admin/index.php	PASS
+AUTH-18	Login	Session cookie is HttpOnly, SameSite=Lax, scoped to the app	Set-Cookie header	ok	ok	PASS
+AUTH-19	Login	Session fixation: server refuses an ID it did not issue	Cookie ERS_SESSION=attackerchosenid…	rejected	rejected	PASS
+AUTH-20	Login	Logout via GET is refused	GET admin/logout.php	302 http://localhost/event-registration/admin/index.php	302 http://localhost/event-registration/admin/index.php	PASS
+AUTH-21	Login	…and the admin is still logged in	GET admin/index.php	200 	200 	PASS
+AUTH-22	Login	Logout via POST + CSRF	POST admin/logout.php	You have been logged out.	You have been logged out.	PASS
+AUTH-23	Login	Admin pages blocked after logout	GET admin/index.php	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+AUTH-24	Login	Old session cookie no longer works after logout	replay pre-logout cookie	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+AUTH-25	Login	Idle 30+ minutes: logged out with message	admin_last_active set to 2001 in the session file	contains: inactivity	found: inactivity	PASS
+AUTH-26	Login	6th try after 5 failures is locked, even with the right password	5 wrong passwords, then the correct one	contains: Too many failed attempts	found: Too many failed attempts	PASS
+AUTH-27	Login	…and not logged in	GET admin/index.php	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-01	Access	Guest GET admin/index.php	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-02	Access	Guest GET admin/events.php	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-03	Access	Guest GET admin/event_add.php	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-04	Access	Guest GET admin/event_view.php?id=1	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-05	Access	Guest GET admin/event_edit.php?id=1	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-06	Access	Guest GET admin/registrations.php	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-07	Access	Guest GET admin/registration_view.php?id=1	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-08	Access	Guest GET admin/registration_edit.php?id=1	no session	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-09	Access	Guest POSTs to all 6 admin write endpoints change nothing	add/edit/delete event, edit/status/delete registration with a valid guest CSRF token	8/6/pending/CICI Computer Laboratory 1, ISUFST	8/6/pending/CICI Computer Laboratory 1, ISUFST	PASS
+ACC-10	Access	test_connection.php needs login once an admin exists	guest GET	302 http://localhost/event-registration/admin/login.php	302 http://localhost/event-registration/admin/login.php	PASS
+ACC-11	Access	Direct browser access blocked: config/config.php	GET /config/config.php	403	403	PASS
+ACC-12	Access	Direct browser access blocked: config/database.php	GET /config/database.php	403	403	PASS
+ACC-13	Access	Direct browser access blocked: includes/queries.php	GET /includes/queries.php	403	403	PASS
+ACC-14	Access	Direct browser access blocked: includes/auth.php	GET /includes/auth.php	403	403	PASS
+ACC-15	Access	Direct browser access blocked: database/event_registration.sql	GET /database/event_registration.sql	403	403	PASS
+ACC-16	Access	Direct browser access blocked: tests/output/backup-20261125-005130.sql	GET /tests/output/backup-20261125-005130.sql	403	403	PASS
+ACC-17	Access	Admin can open the dashboard	logged-in GET admin/index.php	200 	200 	PASS
+EV-01	Events	CREATE event (INSERT)	QA Test Event, 2027-03-01 09:30, QA Hall, capacity 2, open	Event "QA Test Event" was created (ID 9).	Event "QA Test Event" was created (ID 9).	PASS
+EV-02	Events	Row stored with the submitted values	SELECT … WHERE event_id=9	QA Test Event|Created by the test suite|2027-03-01|09:30:00|QA Hall|2|open	QA Test Event|Created by the test suite|2027-03-01|09:30:00|QA Hall|2|open	PASS
+EV-03	Events	READ: admin list shows the new event	GET admin/events.php	contains: QA Test Event	found: QA Test Event	PASS
+EV-04	Events	READ: admin event page	GET admin/event_view.php?id=9	contains: 0 of 2 taken	found: 0 of 2 taken	PASS
+EV-05	Events	READ: public event page with Register button	GET event.php?id=9	contains: register.php?event_id=9	found: register.php?event_id=9	PASS
+EV-06	Events	READ: public list shows the new event	GET index.php	contains: QA Test Event	found: QA Test Event	PASS
+EV-07	Events	UPDATE event (message)	rename, new date/time/venue, capacity 3, empty description	Event "QA Test Event (edited)" was updated.	Event "QA Test Event (edited)" was updated.	PASS
+EV-08	Events	UPDATE stored; empty description saved as NULL	SELECT … WHERE event_id=9	QA Test Event (edited)|NULL|2027-03-02|10:00:00|QA Hall B|3	QA Test Event (edited)|NULL|2027-03-02|10:00:00|QA Hall B|3	PASS
+EV-09	Events	Edit page for a missing id	GET admin/event_edit.php?id=99999	Event not found.	Event not found.	PASS
+EV-10	Events	Non-numeric id	GET admin/event_view.php?id=abc	Event not found.	Event not found.	PASS
+EV-11	Events	Public page for a missing id	GET event.php?id=99999	Sorry, that event could not be found.	Sorry, that event could not be found.	PASS
+EV-12	Events	DELETE event (message)	POST event_delete.php event_id=10	Event "QA Delete Me" was deleted.	Event "QA Delete Me" was deleted.	PASS
+EV-13	Events	DELETE removed the row	SELECT COUNT(*) … event_id=10	0	0	PASS
+EV-14	Events	Deleting it again	same POST	Event not found — it may already have been deleted.	Event not found — it may already have been deleted.	PASS
+EV-15	Events	DELETE via GET is refused	GET event_delete.php?event_id=1	That action must be submitted from a form.|1	That action must be submitted from a form.|1	PASS
+REG-01	Registrations	CREATE registration (INSERT) via public form	event 9, Alice Tester, alice@qa.test, 0917 123 4567	contains: You're registered!	found: You're registered!	PASS
+REG-02	Registrations	Row stored as pending with phone	SELECT … email='alice@qa.test'	Alice Tester|0917 123 4567|pending	Alice Tester|0917 123 4567|pending	PASS
+REG-03	Registrations	Unique reference code format	reference_code	ok	ok	PASS
+REG-04	Registrations	Confirmation page shows the saved reference	confirmation.php	contains: ERS-2026-QG4P7N	found: ERS-2026-QG4P7N	PASS
+REG-05	Registrations	Confirmation is printable	confirmation.php	contains: window.print()	found: window.print()	PASS
+REG-06	Registrations	Another visitor cannot see the confirmation	fresh session GET confirmation.php	0	0	PASS
+REG-07	Registrations	READ: admin list shows it	GET admin/registrations.php	contains: ERS-2026-QG4P7N	found: ERS-2026-QG4P7N	PASS
+REG-08	Registrations	READ: admin registration page	GET registration_view.php?id=7	contains: alice@qa.test	found: alice@qa.test	PASS
+REG-09	Registrations	UPDATE attendee (message)	name → Alice Q. Tester, phone cleared, status confirmed	Registration ERS-2026-QG4P7N was updated.	Registration ERS-2026-QG4P7N was updated.	PASS
+REG-10	Registrations	UPDATE stored; empty phone saved as NULL	SELECT …	Alice Q. Tester|NULL|confirmed	Alice Q. Tester|NULL|confirmed	PASS
+REG-11	Registrations	Quick status: confirmed → pending	POST registration_status.php	pending	pending	PASS
+REG-12	Registrations	Quick status rejects an unknown status	status=approved	Invalid status.	Invalid status.	PASS
+REG-13	Registrations	Quick status via GET is refused	GET registration_status.php?…status=cancelled	pending	pending	PASS
+REG-14	Registrations	DELETE registration (message)	POST registration_delete.php id=8	contains: was deleted.	found: was deleted.	PASS
+REG-15	Registrations	DELETE removed the row	SELECT COUNT(*) …	0	0	PASS
+REG-16	Registrations	DELETE via GET is refused	GET registration_delete.php?registration_id=7	1	1	PASS
+REG-17	Registrations	View a missing registration	GET registration_view.php?id=99999	Registration not found.	Registration not found.	PASS
+VAL-01	Validation	Registration: everything empty	event_id='' name='' email='' agree unchecked	Please choose an event.|Please enter the full name.|Please enter an email address.|Please confirm that your details are correct.	Please choose an event.|Please enter the full name.|Please enter an email address.|Please confirm that your details are correct.	PASS
+VAL-02	Validation	Registration: name of spaces only	full_name='    '	Please enter the full name.	Please enter the full name.	PASS
+VAL-03	Validation	Registration: name 101 characters	full_name=A×101	Name must be 100 characters or fewer.	Name must be 100 characters or fewer.	PASS
+VAL-04	Validation	Registration: bad phone	phone=call-me!	Phone may contain digits, spaces, +, - and ( ) only (7–20 characters).	Phone may contain digits, spaces, +, - and ( ) only (7–20 characters).	PASS
+VAL-05	Validation	Rejected registrations saved nothing	rows with x@qa.test	0	0	PASS
+VAL-06	Validation	Event: everything empty / invalid	name='' date=2027-02-30 time=25:00 venue='' capacity=0 status=bogus	Event name is required.|Please choose a valid date.|Please choose a valid time.|Capacity must be a whole number from 1 to 5000.|Please choose a valid status.|Ve	Event name is required.|Please choose a valid date.|Please choose a valid time.|Capacity must be a whole number from 1 to 5000.|Please choose a valid status.|Ve	PASS
+VAL-07	Validation	Event capacity '5001' rejected	capacity=5001	Capacity must be a whole number from 1 to 5000.	Capacity must be a whole number from 1 to 5000.	PASS
+VAL-08	Validation	Event capacity 'abc' rejected	capacity=abc	Capacity must be a whole number from 1 to 5000.	Capacity must be a whole number from 1 to 5000.	PASS
+VAL-09	Validation	Event capacity '2.5' rejected	capacity=2.5	Capacity must be a whole number from 1 to 5000.	Capacity must be a whole number from 1 to 5000.	PASS
+VAL-10	Validation	Event capacity '-1' rejected	capacity=-1	Capacity must be a whole number from 1 to 5000.	Capacity must be a whole number from 1 to 5000.	PASS
+VAL-11	Validation	Rejected events saved nothing	events named X	0	0	PASS
+VAL-12	Validation	Admin registration edit: empty name/email, bad status	full_name='' email='' status=approved	Please enter the full name.|Please enter an email address.|Please choose a valid status.	Please enter the full name.|Please enter an email address.|Please choose a valid status.	PASS
+VAL-13	Validation	Form keeps typed values after an error	name='Keep Me' email=bad	value="Keep Me"	value="Keep Me"	PASS
+VAL-14	Validation	Array instead of text in URL: index.php?q[]=x	index.php?q[]=x	0 PHP errors	0 PHP errors	PASS
+VAL-15	Validation	Array instead of text in URL: index.php?status[]=open	index.php?status[]=open	0 PHP errors	0 PHP errors	PASS
+VAL-16	Validation	Array instead of text in URL: admin/events.php?q[]=x	admin/events.php?q[]=x	0 PHP errors	0 PHP errors	PASS
+VAL-17	Validation	Array instead of text in URL: admin/registrations.php?q[]=x&event_id[]=1	admin/registrations.php?q[]=x&event_id[]=1	0 PHP errors	0 PHP errors	PASS
+VAL-18	Validation	Array instead of text in a form field	POST register.php full_name[]=x	0 PHP errors	0 PHP errors	PASS
+EML-01	Email	Invalid email rejected: plainaddress	email=plainaddress	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-02	Email	Invalid email rejected: a@b	email=a@b	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-03	Email	Invalid email rejected: @qa.test	email=@qa.test	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-04	Email	Invalid email rejected: a b@qa.test	email=a b@qa.test	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-05	Email	Invalid email rejected: a@qa..test	email=a@qa..test	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-06	Email	Invalid email rejected: a@qa.test.	email=a@qa.test.	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-07	Email	Invalid email rejected: <script>@qa.test	email=<script>@qa.test	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-08	Email	Invalid email rejected: 149-char address	email=149-char address	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+EML-09	Email	No invalid email reached the database	rows named 'Email Test'	0	0	PASS
+EML-10	Email	Valid mixed-case email stored lower-case	email=Mixed.Case@QA.Test	mixed.case@qa.test	mixed.case@qa.test	PASS
+EML-11	Email	Admin edit rejects an invalid email	email=not-an-email	Please enter a valid email address, e.g. name@example.com.	Please enter a valid email address, e.g. name@example.com.	PASS
+DUP-01	Duplicate	Same email, same event	event 9, alice@qa.test again	This email is already registered for this event.	This email is already registered for this event.	PASS
+DUP-02	Duplicate	Same email, different capitals	ALICE@QA.TEST	This email is already registered for this event.	This email is already registered for this event.	PASS
+DUP-03	Duplicate	Only one row for that person	COUNT event 9 alice@qa.test	1	1	PASS
+DUP-04	Duplicate	Same email may register for a different event	event 2, alice@qa.test	contains: You're registered!	found: You're registered!	PASS
+DUP-05	Duplicate	Admin edit to an email already on that event	change bob's email to alice@qa.test	Another registration for this event already uses this email.	Another registration for this event already uses this email.	PASS
+DUP-06	Duplicate	Database UNIQUE key blocks a duplicate inserted directly	INSERT duplicate (event 9, alice@qa.test) in MySQL	contains: Duplicate entry	found: Duplicate entry	PASS
+DUP-07	Duplicate	Database UNIQUE key blocks a duplicate reference code	INSERT with existing reference_code ERS-2026-QG4P7N	contains: Duplicate entry	found: Duplicate entry	PASS
+FULL-01	Full	Seats used up to capacity	capacity 3: alice, bob, carol	3/3	3/3	PASS
+FULL-02	Full	Next registration refused	dave@qa.test on the full event	Sorry, this event is full.	Sorry, this event is full.	PASS
+FULL-03	Full	Refused registration not saved	COUNT dave	0	0	PASS
+FULL-04	Full	Public page shows it is full, no Register button	GET event.php?id=9	contains: Sorry, this event is full.	found: Sorry, this event is full.	PASS
+FULL-05	Full	Full event is not offered in the form's dropdown	GET register.php	0	0	PASS
+FULL-06	Full	Capacity cannot be set below current registrations	capacity=2 with 3 active	Capacity cannot be lower than the 3 active registrations. Cancel some registrations first.	Capacity cannot be lower than the 3 active registrations. Cancel some registrations first.	PASS
+FULL-07	Full	Cancelling frees a seat	bob → cancelled	2/3	2/3	PASS
+FULL-08	Full	…which a new person can take	erin@qa.test	contains: You're registered!	found: You're registered!	PASS
+FULL-09	Full	Re-activating bob on the full event is refused (quick status)	bob cancelled → pending	The event is full (3 of 3 seats taken), so this registration cannot be re-activated.	The event is full (3 of 3 seats taken), so this registration cannot be re-activated.	PASS
+FULL-10	Full	Re-activating bob on the full event is refused (edit form)	bob cancelled → confirmed	The event is full (3 of 3 seats taken), so this registration cannot be re-activated.	The event is full (3 of 3 seats taken), so this registration cannot be re-activated.	PASS
+FULL-11	Full	Bob is still cancelled	status	cancelled	cancelled	PASS
+FULL-12	Full	12 simultaneous registrations for 3 seats	12 parallel POSTs, capacity 3	3	3	PASS
+FULL-13	Full	Re-activation racing a new registration cannot exceed capacity	capacity 1; seat taken in a parallel transaction while re-activating	1	1	PASS
+CAN-01	Cancelled	Cancelled event (id 8) refused	POST register event_id=8	This event has been cancelled.	This event has been cancelled.	PASS
+CAN-02	Cancelled	Closed event (id 6) refused	event_id=6	Registration for this event is closed.	Registration for this event is closed.	PASS
+CAN-03	Cancelled	Completed event (id 7) refused	event_id=7	This event has already taken place.	This event has already taken place.	PASS
+CAN-04	Cancelled	Past event still marked open refused	event dated 2020-01-01, status open	This event has already taken place.	This event has already taken place.	PASS
+CAN-05	Cancelled	Nonexistent event refused	event_id=99999	Please choose an event.	Please choose an event.	PASS
+CAN-06	Cancelled	None of the refused attempts saved	COUNT can@qa.test	0	0	PASS
+CAN-07	Cancelled	Cancelled event page: message and no Register link	GET event.php?id=8	ok	ok	PASS
+CAN-08	Cancelled	Cancelled events hidden from the public list	GET index.php?status=all	0	0	PASS
+CAN-09	Cancelled	Admin cancels an event → new registrations refused	event 2 set to cancelled, then register	This event has been cancelled.	This event has been cancelled.	PASS
+CAN-10	Cancelled	Re-activating a registration on a cancelled event refused	registration 3 (event 2) cancelled → confirmed	The event is cancelled, so this registration cannot be re-activated.	The event is cancelled, so this registration cannot be re-activated.	PASS
+SRCH-01	Search	Public: keyword	q=Excel	CICI Intro to Data Analytics with Excel	CICI Intro to Data Analytics with Excel	PASS
+SRCH-02	Search	Public: keyword matches venue	q=Auditorium	CICI Tech Career Talk: Landing Your First IT Job	CICI Tech Career Talk: Landing Your First IT Job	PASS
+SRCH-03	Search	Public: status=closed	status=closed	CICI Leadership Summit for Student Officers	CICI Leadership Summit for Student Officers	PASS
+SRCH-04	Search	Public: keyword + status combined	q=Leadership&status=open			PASS
+SRCH-05	Search	Public: no match shows empty state	q=zzzz	contains: No events match your search	found: No events match your search	PASS
+SRCH-06	Search	Public: unknown status falls back to open	status=hacked	QA Past Open|CICI Web Development Workshop|CICI Christmas Charity Fun Run 2026|CICI Tech Career Talk: Landing Your First IT Job|CICI Intro to Data Analytics wit	QA Past Open|CICI Web Development Workshop|CICI Christmas Charity Fun Run 2026|CICI Tech Career Talk: Landing Your First IT Job|CICI Intro to Data Analytics wit	PASS
+SRCH-07	Search	Public: % is a literal, not a wildcard	q=%	0 events found	0 events found	PASS
+SRCH-08	Search	Public: _ is a literal, not a wildcard	q=_	0 events found	0 events found	PASS
+SRCH-09	Search	Admin events: status=cancelled	status=cancelled	2	2	PASS
+SRCH-10	Search	Admin events: keyword	q=Laboratory	contains: Showing 1 of	found: Showing 1 of	PASS
+SRCH-11	Search	Registrations: by reference code	q=ERS-2026-A1B2C3	1	1	PASS
+SRCH-12	Search	Registrations: by email fragment	q=juan.delacruz	2	2	PASS
+SRCH-13	Search	Registrations: by event	event_id=1	2	2	PASS
+SRCH-14	Search	Registrations: by status	status=cancelled	4	4	PASS
+SRCH-15	Search	Registrations: event + status + keyword	event_id=9 status=pending q=qa.test	3	3	PASS
+SRCH-16	Search	Registrations: status counters match the database	All/Pending/Confirmed/Cancelled badges	17|11|2|4	17|11|2|4	PASS
+SQLI-01	SQLi	Public search payload	q=' OR 1=1 -- 	0 events found, 0 errors, no hashes	0 events found, 0 errors, no hashes	PASS
+SQLI-02	SQLi	Public search payload	q=%' UNION SELECT password_hash,1,1,1,1,1,1,1,1,1 FROM administrators -- 	0 events found, 0 errors, no hashes	0 events found, 0 errors, no hashes	PASS
+SQLI-03	SQLi	Public search payload	q='; DROP TABLE events; -- 	0 events found, 0 errors, no hashes	0 events found, 0 errors, no hashes	PASS
+SQLI-04	SQLi	Tables intact after DROP payload	information_schema	4	4	PASS
+SQLI-05	SQLi	Numeric id with SQL appended is rejected	event.php?id=1 OR 1=1	Sorry, that event could not be found.	Sorry, that event could not be found.	PASS
+SQLI-06	SQLi	Admin search payloads	q=' OR 1=1 --  on events + registrations	0|0	0|0	PASS
+SQLI-07	SQLi	Injection text in a name is stored as plain text	full_name=Robert'); DROP TABLE registrations;--	Robert'); DROP TABLE registrations;--|4	Robert'); DROP TABLE registrations;--|4	PASS
+XSS-01	XSS	Stored XSS in event fields escaped: index.php	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-02	XSS	Stored XSS in event fields escaped: event.php?id=14	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-03	XSS	Stored XSS in event fields escaped: admin/events.php	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-04	XSS	Stored XSS in event fields escaped: admin/event_view.php?id=14	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-05	XSS	Stored XSS in event fields escaped: admin/event_edit.php?id=14	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-06	XSS	Stored XSS in event fields escaped: register.php?event_id=14	name=<script>alert("xss")</script>, description=<img onerror>, venue="><svg onload>	0 raw tags	0 raw tags	PASS
+XSS-07	XSS	Stored XSS in attendee name escaped (list, view, edit)	full_name=<script>alert("xss")</script>	0 raw tags	0 raw tags	PASS
+XSS-08	XSS	…shown as text	same	contains: &lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;	found: &lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;	PASS
+XSS-09	XSS	Reflected XSS in search box escaped	index.php?q="><script>alert(1)</script>	0	0	PASS
+XSS-10	XSS	Reflected XSS in a rejected form field escaped	full_name=<script>alert(1)</script>, email=bad	0	0	PASS
+XSS-11	XSS	Login form escapes the echoed username	username="><script>alert(1)</script>	0	0	PASS
+XSS-12	XSS	Delete-confirm text cannot break out of its attribute	event name with quotes on admin/events.php	0	0	PASS
+CSRF-01	CSRF	Create event	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-02	CSRF	Edit event	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-03	CSRF	Delete event	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-04	CSRF	Edit registration	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-05	CSRF	Change status	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-06	CSRF	Delete registration	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-07	CSRF	Public registration	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-08	CSRF	Logout	no token / wrong token / other session's token	refused x3, no change	refused x3, no change	PASS
+CSRF-09	CSRF	…admin still logged in after forged logouts	GET admin/index.php	200 	200 	PASS
+CSRF-10	CSRF	Login without token refused (even with the right password)	POST login.php without csrf_token	Your session expired or the form was invalid. Please try again.|302 http://localhost/event-registration/admin/login.php	Your session expired or the form was invalid. Please try again.|302 http://localhost/event-registration/admin/login.php	PASS
+CSRF-11	CSRF	Every POST form on admin pages carries a token	events, registrations, edit, view, dashboard pages	104 forms / 104 tokens	104 forms / 104 tokens	PASS
+SEC-01	Headers	Clickjacking protection on admin pages	GET admin/index.php response headers	contains: X-Frame-Options: SAMEORIGIN	found: X-Frame-Options: SAMEORIGIN	PASS
+SEC-02	Headers	MIME sniffing disabled	same	contains: X-Content-Type-Options: nosniff	found: X-Content-Type-Options: nosniff	PASS
+SEC-03	Headers	Admin pages not cached	same	contains: Cache-Control: no-store	found: Cache-Control: no-store	PASS
+FK-01	FK	Registration for a nonexistent event rejected by MySQL	INSERT … event_id=99999	contains: foreign key constraint fails	found: foreign key constraint fails	PASS
+FK-02	FK	Invalid status rejected by MySQL (ENUM + CHECK)	UPDATE registrations SET status='approved'	contains: ERROR	found: ERROR	PASS
+FK-03	FK	Capacity 0 rejected by MySQL CHECK	UPDATE events SET capacity=0	contains: chk_events_capacity	found: chk_events_capacity	PASS
+FK-04	FK	Delete event with registrations through the website	delete event 9 (4 registrations)	Event "QA Test Event (edited)" was deleted, together with 4 registrations.	Event "QA Test Event (edited)" was deleted, together with 4 registrations.	PASS
+FK-05	FK	ON DELETE CASCADE removed its registrations	COUNT registrations event_id=9	0	0	PASS
+FK-06	FK	No orphan registrations anywhere	LEFT JOIN events … WHERE e.event_id IS NULL	0	0	PASS
+FK-07	FK	ON UPDATE CASCADE follows a changed event_id	event 11 renumbered to 900	3|0	3|0	PASS
+FK-08	FK	Foreign key definition	information_schema.REFERENTIAL_CONSTRAINTS	fk_registrations_event|events|CASCADE|CASCADE	fk_registrations_event|events|CASCADE|CASCADE	PASS
+PAGE-01	Pages	Loads without PHP errors: index.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-02	Pages	Loads without PHP errors: index.php?status=all	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-03	Pages	Loads without PHP errors: event.php?id=1	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-04	Pages	Loads without PHP errors: register.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-05	Pages	Loads without PHP errors: confirmation.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-06	Pages	Loads without PHP errors: admin/index.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-07	Pages	Loads without PHP errors: admin/events.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-08	Pages	Loads without PHP errors: admin/event_view.php?id=1	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-09	Pages	Loads without PHP errors: admin/event_add.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-10	Pages	Loads without PHP errors: admin/event_edit.php?id=1	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-11	Pages	Loads without PHP errors: admin/registrations.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-12	Pages	Loads without PHP errors: admin/registration_view.php?id=1	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-13	Pages	Loads without PHP errors: admin/registration_edit.php?id=1	logged-in GET	200, 0 errors	200, 0 errors	PASS
+PAGE-14	Pages	Loads without PHP errors: test_connection.php	logged-in GET	200, 0 errors	200, 0 errors	PASS
+DBF-01	DB failure	Unknown database (debug): index.php	DB_NAME='no_such_db', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-02	DB failure	Unknown database (debug): admin/login.php	DB_NAME='no_such_db', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-03	DB failure	Unknown database (production): index.php	DB_NAME='no_such_db', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-04	DB failure	Unknown database (production): admin/login.php	DB_NAME='no_such_db', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-05	DB failure	Wrong password (debug): index.php	DB_PASS='wrong-password', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-06	DB failure	Wrong password (debug): admin/login.php	DB_PASS='wrong-password', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-07	DB failure	Wrong password (production): index.php	DB_PASS='wrong-password', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-08	DB failure	Wrong password (production): admin/login.php	DB_PASS='wrong-password', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-09	DB failure	MySQL not reachable (debug): index.php	DB_HOST='127.0.0.1;port=3399', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-10	DB failure	MySQL not reachable (debug): admin/login.php	DB_HOST='127.0.0.1;port=3399', APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Site temporarily unavailable", reason shown=yes	PASS
+DBF-11	DB failure	MySQL not reachable (production): index.php	DB_HOST='127.0.0.1;port=3399', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-12	DB failure	MySQL not reachable (production): admin/login.php	DB_HOST='127.0.0.1;port=3399', APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Site temporarily unavailable", leaks=[]	PASS
+DBF-13	DB failure	Tables missing (debug): index.php	DB_NAME='ers_empty_test' (empty database), APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Something went wrong", reason shown=yes	PASS
+DBF-14	DB failure	Tables missing (debug): admin/login.php	DB_NAME='ers_empty_test' (empty database), APP_DEBUG=true	HTTP 500, friendly title + reason for the developer	HTTP 500, title="Something went wrong", reason shown=yes	PASS
+DBF-15	DB failure	Tables missing (production): index.php	DB_NAME='ers_empty_test' (empty database), APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Something went wrong", leaks=[]	PASS
+DBF-16	DB failure	Tables missing (production): admin/login.php	DB_NAME='ers_empty_test' (empty database), APP_DEBUG=false	HTTP 500, friendly title, no technical details	HTTP 500, title="Something went wrong", leaks=[]	PASS
+DBF-17	DB failure	Site works again with the original config	config/config.php restored	HTTP 200	HTTP 200	PASS
+DBF-18	DB failure	Failures are written to the server error log	apache/logs/error.log	'Database connection failed' lines present	25 lines	PASS

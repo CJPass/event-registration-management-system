@@ -1,0 +1,237 @@
+/*
+ * assets/css/style.css
+ * ------------------------------------------------------------------
+ * Custom styles on top of Bootstrap 5. Bootstrap does most of the
+ * work; this file sets the theme colours and a few components that
+ * Bootstrap does not provide (date tile, stat cards, hero).
+ */
+
+/* ---------- Theme colours ---------- */
+:root {
+    --brand: #4338ca;          /* indigo */
+    --brand-dark: #312e81;
+    --brand-soft: #eef2ff;
+    --ink: #1e293b;            /* slate text */
+    --page-bg: #f6f7fb;
+
+    /* Make Bootstrap's "primary" match the brand */
+    --bs-primary: #4338ca;
+    --bs-primary-rgb: 67, 56, 202;
+    --bs-link-color: #4338ca;
+    --bs-link-color-rgb: 67, 56, 202;
+    --bs-link-hover-color: #312e81;
+    --bs-link-hover-color-rgb: 49, 46, 129;
+    --bs-body-color: #1e293b;
+    --bs-body-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--page-bg);
+    font-size: 0.975rem;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--ink);
+    letter-spacing: -0.01em;
+}
+
+/* Buttons use the brand colour (Bootstrap 5.3 button variables) */
+.btn-primary {
+    --bs-btn-bg: var(--brand);
+    --bs-btn-border-color: var(--brand);
+    --bs-btn-hover-bg: var(--brand-dark);
+    --bs-btn-hover-border-color: var(--brand-dark);
+    --bs-btn-active-bg: var(--brand-dark);
+    --bs-btn-active-border-color: var(--brand-dark);
+    --bs-btn-disabled-bg: #a5b4fc;
+    --bs-btn-disabled-border-color: #a5b4fc;
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--brand);
+    --bs-btn-border-color: var(--brand);
+    --bs-btn-hover-bg: var(--brand);
+    --bs-btn-hover-border-color: var(--brand);
+    --bs-btn-active-bg: var(--brand-dark);
+    --bs-btn-active-border-color: var(--brand-dark);
+}
+.btn { font-weight: 500; }
+
+.progress-bar { background-color: var(--brand); }
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #a5b4fc;
+    box-shadow: 0 0 0 0.2rem rgba(67, 56, 202, 0.15);
+}
+
+/* ---------- Navbar ---------- */
+.navbar-brand-bg {
+    background-color: var(--ink);
+}
+.navbar .nav-link.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ---------- Hero banner (home page) ---------- */
+.hero {
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand) 60%, #6366f1);
+    color: #fff;
+    border-radius: 1rem;
+}
+.hero h1 { color: #fff; }
+.hero .lead { color: rgba(255, 255, 255, 0.85); }
+
+/* ---------- Event cards ---------- */
+.event-card {
+    border-radius: 0.85rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 1.5rem rgba(30, 41, 59, 0.1) !important;
+}
+
+/* Calendar-style date block */
+.date-tile {
+    flex: 0 0 56px;
+    height: 60px;
+    border-radius: 0.6rem;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+}
+.date-tile .month {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.date-tile .day {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.date-tile.lg { flex-basis: 72px; height: 78px; }
+.date-tile.lg .day { font-size: 1.9rem; }
+
+/* Show only 2 lines of description on cards */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ---------- Generic panels ---------- */
+.panel {
+    background: #fff;
+    border-radius: 0.85rem;
+    box-shadow: 0 1px 2px rgba(30, 41, 59, 0.06), 0 1px 3px rgba(30, 41, 59, 0.05);
+}
+
+/* Icon + label rows on the event details page */
+.detail-list li {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid #eef0f4;
+}
+.detail-list li:last-child { border-bottom: 0; }
+.detail-list i {
+    color: var(--brand);
+    font-size: 1.1rem;
+}
+
+/* ---------- Confirmation page ---------- */
+.success-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #16a34a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+}
+.reference-code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 1.35rem;
+    letter-spacing: 0.08em;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    border: 1px dashed #a5b4fc;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+}
+
+/* ---------- Admin ---------- */
+.admin-tabs .nav-link {
+    color: #475569;
+    white-space: nowrap;
+}
+.admin-tabs .nav-link.active {
+    background-color: var(--brand);
+    color: #fff;
+}
+
+.stat-card {
+    border-radius: 0.85rem;
+}
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.table > :not(caption) > * > * {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+.table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    font-weight: 600;
+    background-color: #f8fafc;
+    white-space: nowrap;
+}
+
+/* Tables scroll sideways on small phones instead of breaking the layout.
+   position: relative keeps absolutely-positioned children (the screen-reader
+   labels .visually-hidden inside the action buttons) inside the scroll box;
+   without it they stretched the whole page sideways on phones. */
+.table-responsive {
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+/* Lets long text shrink (and .text-truncate work) inside flex rows,
+   e.g. "Latest registrations" on the dashboard. Not part of Bootstrap 5.3. */
+.min-w-0 { min-width: 0; }
+.list-group-item > .badge { flex-shrink: 0; }
+
+/* ---------- Print (confirmation slip, registration record) ---------- */
+@media print {
+    @page { margin: 1.5cm; }
+    body { background: #fff !important; font-size: 11pt; }
+    main { padding: 0 !important; }
+    .alert { display: none !important; }          /* flash messages */
+    .panel, .card { box-shadow: none !important; border: 1px solid #cbd5e1; }
+    .printable { border: 2px solid #1e293b; }
+    .success-icon { background: none; border: 2px solid #16a34a; }
+    .reference-code { background: none; border: 2px dashed #1e293b; color: #000; font-size: 16pt; }
+    .print-header { border-bottom: 1px solid #cbd5e1; padding-bottom: .5rem; text-align: left; }
+    a { color: inherit !important; text-decoration: none !important; }
+    .badge { border: 1px solid #64748b; color: #000 !important; background: none !important; }
+}

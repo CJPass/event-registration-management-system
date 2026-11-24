@@ -1,0 +1,9 @@
+# Block direct browser access to this folder (PHP can still include its files).
+# Works on Apache 2.4 (Require) and older/compatible servers (Order/Deny).
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
