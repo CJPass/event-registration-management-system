@@ -13,7 +13,7 @@
 <footer class="navbar-brand-bg text-light py-3 mt-auto d-print-none">
     <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
         <small>&copy; <?= date('Y') ?> <?= e(APP_NAME) ?></small>
-        <small class="text-secondary text-center text-md-end"><?= e(ORG_NAME) ?> ·
+        <small class="text-white-50 text-center text-md-end"><?= e(ORG_NAME) ?> ·
             <a href="<?= e(UNIVERSITY_URL) ?>" class="link-light" target="_blank" rel="noopener">ISUFST</a></small>
     </div>
 </footer>

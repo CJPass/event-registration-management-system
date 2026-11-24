@@ -34,6 +34,13 @@
                 </li>
             </ul>
 
+            <!-- Light/dark mode switch (handled in assets/js/script.js) -->
+            <button type="button" class="btn btn-sm theme-toggle me-lg-2 my-2 my-lg-0" data-theme-toggle
+                    aria-label="Toggle dark mode" title="Toggle dark mode">
+                <i class="bi bi-moon-stars"></i><i class="bi bi-sun"></i>
+                <span class="d-lg-none ms-1">Theme</span>
+            </button>
+
             <!-- Administrator links: a menu when logged in, a Login link otherwise -->
             <?php $navAdmin = function_exists('current_admin') ? current_admin() : null; ?>
             <ul class="navbar-nav">

@@ -12,12 +12,25 @@
 $pageTitle = isset($pageTitle) ? $pageTitle . ' | ' . APP_NAME : APP_NAME;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
+    <!-- Apply the saved (or system) light/dark theme before the page paints,
+         so dark-mode users never see a white flash. The toggle is in navbar.php. -->
+    <script>
+        (function () {
+            var theme;
+            try { theme = localStorage.getItem('theme'); } catch (e) {}
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
     <meta charset="UTF-8">
     <!-- Makes the layout responsive on phones and tablets -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($pageTitle) ?></title>
+    <meta name="theme-color" content="#650000">
 
     <!-- Inter font (falls back to the system font if offline) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

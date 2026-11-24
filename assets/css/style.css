@@ -6,24 +6,90 @@
  * Bootstrap does not provide (date tile, stat cards, hero).
  */
 
-/* ---------- Theme colours ---------- */
-:root {
-    --brand: #4338ca;          /* indigo */
-    --brand-dark: #312e81;
-    --brand-soft: #eef2ff;
-    --ink: #1e293b;            /* slate text */
-    --page-bg: #f6f7fb;
+/* ---------- Theme colours ----------
+ * Red taken from the PSITS logo (#8c0303). Every colour below is a
+ * variable so dark mode only has to swap the values (see the
+ * [data-bs-theme="dark"] block). The theme is set on <html> by
+ * includes/header.php and switched by the moon/sun button in the navbar.
+ */
+:root,
+[data-bs-theme="light"] {
+    --brand: #8c0303;          /* PSITS logo red */
+    --brand-dark: #650000;
+    --brand-light: #c0262b;
+    --brand-soft: #fbeaea;
+    --brand-border: #f0b4b4;
+    --brand-text: #8c0303;     /* brand colour used for text and icons */
+    --ink: #1e293b;            /* heading text */
+    --page-bg: #f7f5f5;
+    --panel-bg: #fff;
+    --line: #eef0f4;
+    --muted: #64748b;
+    --thead-bg: #f8fafc;
+    --chrome-bg: #650000;      /* navbar and footer */
 
     /* Make Bootstrap's "primary" match the brand */
-    --bs-primary: #4338ca;
-    --bs-primary-rgb: 67, 56, 202;
-    --bs-link-color: #4338ca;
-    --bs-link-color-rgb: 67, 56, 202;
-    --bs-link-hover-color: #312e81;
-    --bs-link-hover-color-rgb: 49, 46, 129;
+    --bs-primary: #8c0303;
+    --bs-primary-rgb: 140, 3, 3;
+    --bs-primary-bg-subtle: #fbeaea;
+    --bs-primary-border-subtle: #f0b4b4;
+    --bs-primary-text-emphasis: #650000;
+    --bs-link-color: #8c0303;
+    --bs-link-color-rgb: 140, 3, 3;
+    --bs-link-hover-color: #650000;
+    --bs-link-hover-color-rgb: 101, 0, 0;
     --bs-body-color: #1e293b;
     --bs-body-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
+
+[data-bs-theme="dark"] {
+    --brand: #b3161b;          /* a little brighter so buttons stand out on dark */
+    --brand-dark: #8c0303;
+    --brand-light: #d9363c;
+    --brand-soft: #3a1416;
+    --brand-border: #7a2a2d;
+    --brand-text: #f47a7e;     /* readable red on a dark background */
+    --ink: #f1f5f9;
+    --page-bg: #121214;
+    --panel-bg: #1c1c20;
+    --line: #2c2c33;
+    --muted: #9ca3af;
+    --thead-bg: #232329;
+    --chrome-bg: #2a0507;
+
+    --bs-body-bg: #121214;
+    --bs-body-color: #e2e8f0;
+    --bs-primary: #b3161b;
+    --bs-primary-rgb: 179, 22, 27;
+    --bs-primary-bg-subtle: #3a1416;
+    --bs-primary-border-subtle: #7a2a2d;
+    --bs-primary-text-emphasis: #f7a3a6;
+    --bs-link-color: #f47a7e;
+    --bs-link-color-rgb: 244, 122, 126;
+    --bs-link-hover-color: #f7a3a6;
+    --bs-link-hover-color-rgb: 247, 163, 166;
+    --bs-border-color: #2f2f37;
+    --bs-secondary-bg: #232329;
+    --bs-tertiary-bg: #1c1c20;
+    color-scheme: dark;
+}
+
+/* Light-only Bootstrap utilities used in the pages, re-coloured for dark mode */
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .input-group-text.bg-white { background-color: var(--bs-secondary-bg) !important; }
+[data-bs-theme="dark"] .btn-light {
+    --bs-btn-color: #e2e8f0;
+    --bs-btn-bg: #2a2a31;
+    --bs-btn-border-color: #3a3a43;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #34343c;
+    --bs-btn-hover-border-color: #44444e;
+    --bs-btn-active-bg: #3a3a43;
+    --bs-btn-active-color: #fff;
+}
+[data-bs-theme="dark"] .text-bg-light { background-color: #2a2a31 !important; color: #e2e8f0 !important; }
+[data-bs-theme="dark"] .text-primary { color: var(--brand-text) !important; }
+[data-bs-theme="dark"] .hero .badge.bg-white { background-color: #fff !important; color: var(--brand-dark) !important; }
 
 body {
     background-color: var(--page-bg);
@@ -43,11 +109,11 @@ h1, h2, h3, h4, h5 {
     --bs-btn-hover-border-color: var(--brand-dark);
     --bs-btn-active-bg: var(--brand-dark);
     --bs-btn-active-border-color: var(--brand-dark);
-    --bs-btn-disabled-bg: #a5b4fc;
-    --bs-btn-disabled-border-color: #a5b4fc;
+    --bs-btn-disabled-bg: var(--brand-border);
+    --bs-btn-disabled-border-color: var(--brand-border);
 }
 .btn-outline-primary {
-    --bs-btn-color: var(--brand);
+    --bs-btn-color: var(--brand-text);
     --bs-btn-border-color: var(--brand);
     --bs-btn-hover-bg: var(--brand);
     --bs-btn-hover-border-color: var(--brand);
@@ -60,13 +126,13 @@ h1, h2, h3, h4, h5 {
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #a5b4fc;
-    box-shadow: 0 0 0 0.2rem rgba(67, 56, 202, 0.15);
+    border-color: var(--brand-border);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.2);
 }
 
 /* ---------- Navbar ---------- */
 .navbar-brand-bg {
-    background-color: var(--ink);
+    background-color: var(--chrome-bg);
 }
 .navbar .nav-link.active {
     color: #fff;
@@ -75,7 +141,7 @@ h1, h2, h3, h4, h5 {
 
 /* ---------- Hero banner (home page) ---------- */
 .hero {
-    background: linear-gradient(135deg, var(--brand-dark), var(--brand) 60%, #6366f1);
+    background: linear-gradient(135deg, var(--brand-dark), var(--brand) 60%, var(--brand-light));
     color: #fff;
     border-radius: 1rem;
 }
@@ -89,7 +155,7 @@ h1, h2, h3, h4, h5 {
 }
 .event-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0.75rem 1.5rem rgba(30, 41, 59, 0.1) !important;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12) !important;
 }
 
 /* Calendar-style date block */
@@ -98,7 +164,7 @@ h1, h2, h3, h4, h5 {
     height: 60px;
     border-radius: 0.6rem;
     background: var(--brand-soft);
-    color: var(--brand);
+    color: var(--brand-text);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -128,7 +194,7 @@ h1, h2, h3, h4, h5 {
 
 /* ---------- Generic panels ---------- */
 .panel {
-    background: #fff;
+    background: var(--panel-bg);
     border-radius: 0.85rem;
     box-shadow: 0 1px 2px rgba(30, 41, 59, 0.06), 0 1px 3px rgba(30, 41, 59, 0.05);
 }
@@ -138,11 +204,11 @@ h1, h2, h3, h4, h5 {
     display: flex;
     gap: 0.75rem;
     padding: 0.65rem 0;
-    border-bottom: 1px solid #eef0f4;
+    border-bottom: 1px solid var(--line);
 }
 .detail-list li:last-child { border-bottom: 0; }
 .detail-list i {
-    color: var(--brand);
+    color: var(--brand-text);
     font-size: 1.1rem;
 }
 
@@ -163,8 +229,8 @@ h1, h2, h3, h4, h5 {
     font-size: 1.35rem;
     letter-spacing: 0.08em;
     background: var(--brand-soft);
-    color: var(--brand-dark);
-    border: 1px dashed #a5b4fc;
+    color: var(--bs-primary-text-emphasis);
+    border: 1px dashed var(--brand-border);
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     display: inline-block;
@@ -172,7 +238,7 @@ h1, h2, h3, h4, h5 {
 
 /* ---------- Admin ---------- */
 .admin-tabs .nav-link {
-    color: #475569;
+    color: var(--muted);
     white-space: nowrap;
 }
 .admin-tabs .nav-link.active {
@@ -201,9 +267,9 @@ h1, h2, h3, h4, h5 {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #64748b;
+    color: var(--muted);
     font-weight: 600;
-    background-color: #f8fafc;
+    background-color: var(--thead-bg);
     white-space: nowrap;
 }
 
@@ -220,6 +286,21 @@ h1, h2, h3, h4, h5 {
    e.g. "Latest registrations" on the dashboard. Not part of Bootstrap 5.3. */
 .min-w-0 { min-width: 0; }
 .list-group-item > .badge { flex-shrink: 0; }
+
+/* Dark mode: card/panel shadows and the success tick */
+[data-bs-theme="dark"] .panel { box-shadow: 0 0 0 1px var(--line); }
+[data-bs-theme="dark"] .success-icon { background: #12341f; color: #4ade80; }
+
+/* Theme toggle button in the navbar */
+.theme-toggle {
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    line-height: 1;
+}
+.theme-toggle:hover,
+.theme-toggle:focus-visible { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+[data-bs-theme="dark"] .theme-toggle .bi-moon-stars,
+[data-bs-theme="light"] .theme-toggle .bi-sun { display: none; }
 
 /* ---------- Print (confirmation slip, registration record) ---------- */
 @media print {

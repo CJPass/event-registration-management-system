@@ -9,6 +9,9 @@
  *  2. Tooltips           – any element with data-bs-toggle="tooltip" gets a
  *                          Bootstrap tooltip (shows its title on hover).
  *  3. Auto-hide alerts   – green "success" messages fade out after 5 seconds.
+ *  4. Dark mode toggle   – the moon/sun button in the navbar switches the
+ *                          theme and remembers the choice in localStorage.
+ *                          (The saved theme is applied early in header.php.)
  */
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -29,5 +32,28 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function () {
             bootstrap.Alert.getOrCreateInstance(alert).close();
         }, 5000);
+    });
+
+    // 4. Dark mode toggle
+    var root = document.documentElement;
+    function setTheme(theme, save) {
+        root.setAttribute('data-bs-theme', theme);
+        if (save) {
+            try { localStorage.setItem('theme', theme); } catch (e) {}
+        }
+    }
+    document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            setTheme(root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark', true);
+        });
+    });
+    // Always print in light mode (dark backgrounds waste ink)
+    var themeBeforePrint = null;
+    window.addEventListener('beforeprint', function () {
+        themeBeforePrint = root.getAttribute('data-bs-theme');
+        setTheme('light', false);
+    });
+    window.addEventListener('afterprint', function () {
+        if (themeBeforePrint) setTheme(themeBeforePrint, false);
     });
 });
