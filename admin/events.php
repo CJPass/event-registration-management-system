@@ -83,7 +83,7 @@ require_once __DIR__ . '/../includes/admin_nav.php';
                     <td class="text-nowrap"><?= (int) $ev['registered'] ?> / <?= (int) $ev['capacity'] ?></td>
                     <td><?= status_badge($ev['status']) ?></td>
                     <td class="text-end text-nowrap">
-                        <a href="<?= url('admin/event_view.php?id=' . $ev['event_id']) ?>" class="btn btn-sm btn-light" title="View details">
+                        <a href="<?= url('admin/event_view.php?id=' . $ev['event_id']) ?>" class="btn btn-sm btn-light" title="View details" data-bs-toggle="tooltip">
                             <i class="bi bi-eye"></i><span class="visually-hidden">View</span>
                         </a>
                         <a href="<?= url('admin/event_edit.php?id=' . $ev['event_id']) ?>" class="btn btn-sm btn-outline-primary">

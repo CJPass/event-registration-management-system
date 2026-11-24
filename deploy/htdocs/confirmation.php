@@ -72,7 +72,7 @@ require_once __DIR__ . '/includes/header.php';
 
             <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 d-print-none">
                 <a href="<?= url('index.php') ?>" class="btn btn-primary"><i class="bi bi-grid"></i> Browse more events</a>
-                <span class="btn btn-outline-secondary disabled"><i class="bi bi-printer"></i> Press Ctrl+P to print</span>
+                <button type="button" class="btn btn-outline-secondary" data-print><i class="bi bi-printer"></i> Print</button>
             </div>
         </div>
     <?php endif; ?>

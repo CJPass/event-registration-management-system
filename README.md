@@ -54,6 +54,7 @@ event-registration/
 │
 ├── assets/
 │   ├── css/style.css          Custom styles on top of Bootstrap
+│   ├── js/script.js           Print buttons, tooltips, auto-hide success alerts
 │   └── images/                Logos / event images
 │
 └── database/
@@ -207,10 +208,10 @@ Start Apache and MySQL in XAMPP. To start over at any time, re-import `database/
 
 ## Languages used
 
-Only the languages in the project guidelines: **PHP**, **MySQL (SQL)**, **HTML**, **CSS** and **Bootstrap 5**.
-There is no custom JavaScript: delete confirmations are Bootstrap modals (`includes/delete_modal.php`)
-opened by Bootstrap's own `data-bs-toggle="modal"`; the navbar, dropdowns and alerts also use only
-Bootstrap's built-in components.
+**PHP**, **MySQL (SQL)**, **HTML**, **CSS** and **Bootstrap 5**, plus a small JavaScript file.
+Delete confirmations are Bootstrap modals (`includes/delete_modal.php`) opened by Bootstrap's own
+`data-bs-toggle="modal"`. `assets/js/script.js` adds optional extras: Print buttons, Bootstrap tooltips
+and auto-hiding success messages. Every page and every CRUD action still works with JavaScript turned off.
 
 ## Test report
 

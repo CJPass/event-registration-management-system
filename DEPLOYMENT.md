@@ -144,7 +144,7 @@ with it and `setup.php` will simply send you to the login page.
    ├── .htaccess          ← hidden file; turn on "show hidden files" if you don't see it
    ├── index.php  event.php  register.php  confirmation.php
    ├── admin/     (14 .php files)
-   ├── assets/    (css/style.css, images/)
+   ├── assets/    (css/style.css, js/script.js, images/)
    ├── config/    (.htaccess, config.php, database.php, config.production.example.php)
    └── includes/  (.htaccess + 11 .php files)
    ```

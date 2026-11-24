@@ -37,7 +37,7 @@ require_once __DIR__ . '/../includes/admin_nav.php';
     </div>
     <div class="d-flex flex-wrap gap-2 d-print-none">
         <?php $r = $reg; $statusReturn = 'view'; require __DIR__ . '/../includes/status_buttons.php'; ?>
-        <span class="btn btn-light disabled" title="Use your browser menu or Ctrl+P to print"><i class="bi bi-printer"></i> Ctrl+P to print</span>
+        <button type="button" class="btn btn-light" data-print><i class="bi bi-printer"></i> Print</button>
         <a href="<?= url('admin/registration_edit.php?id=' . $id) ?>" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
         <?php $delAction = 'admin/registration_delete.php'; $delField = 'registration_id'; $delId = $id; $delSmall = false; $delIconOnly = false;
               $delMessage = 'Delete the registration of ' . $reg['full_name'] . '? This cannot be undone.';

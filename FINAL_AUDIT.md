@@ -75,7 +75,7 @@ All operations were done through the website's own forms over HTTP, then checked
 
 **Business rules also tested today:** event full (13 tests), duplicate email (7), cancelled event (10), validation (18), email rules (11), search/filter (16) — all passed.
 
-**Totals:** 206 end-to-end checks and 18 database-failure checks passed (see `tests/TEST_REPORT.md`). The custom JavaScript and the shell/PowerShell helper scripts have since been removed so the project uses only PHP, MySQL, HTML, CSS and Bootstrap.
+**Totals:** 206 end-to-end checks and 18 database-failure checks passed (see `tests/TEST_REPORT.md`). The shell/PowerShell helper scripts have since been removed.
 
 ---
 
@@ -147,7 +147,7 @@ README.md, DEPLOYMENT.md, FINAL_AUDIT.md
 index.php, event.php, register.php, confirmation.php, test_connection.php
 .htaccess
 admin/            (14 PHP files)
-assets/           (css/style.css, images/)
+assets/           (css/style.css, js/script.js, images/)
 config/           (config.php, database.php, config.production.example.php, .htaccess)
 includes/         (11 PHP files + .htaccess)
 database/         (event_registration.sql, infinityfree_import.sql, migration_001_admin_login.sql, + your phpMyAdmin export)
